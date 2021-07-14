@@ -8,7 +8,7 @@ on: [pull_request, push]
 jobs:
   test:
     name: Test Suite
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
 
     strategy:
         matrix:
