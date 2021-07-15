@@ -43,14 +43,14 @@ stages:
   - publish
   - release
 
-# test:
-#   stage: test
-#   extends:
-#     - .rust-base-job
-#   script:
-#     - cargo fmt -- --check
-#     - cargo check --workspace --release
-#     - cargo test --workspace --release
+test:
+  stage: test
+  extends:
+    - .rust-base-job
+  script:
+    - cargo fmt -- --check
+    - cargo check --workspace --release
+    - cargo test --workspace --release
 
 build:
   stage: build
