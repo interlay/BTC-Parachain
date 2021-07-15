@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["interbtc_runtime_parachain"] = [{"text":"impl OpaqueKeys for <a class=\"struct\" href=\"interbtc_runtime_parachain/struct.SessionKeys.html\" title=\"struct interbtc_runtime_parachain::SessionKeys\">SessionKeys</a>","synthetic":false,"types":["interbtc_runtime_parachain::SessionKeys"]}];
+implementors["interbtc_runtime_standalone"] = [{"text":"impl OpaqueKeys for <a class=\"struct\" href=\"interbtc_runtime_standalone/struct.SessionKeys.html\" title=\"struct interbtc_runtime_standalone::SessionKeys\">SessionKeys</a>","synthetic":false,"types":["interbtc_runtime_standalone::SessionKeys"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

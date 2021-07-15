@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["new_full","Builds a new service for a full client."],["new_light","Builds a new service for a light client."],["new_partial",""]],"struct":[["Executor","A unit struct which implements `NativeExecutionDispatch` feeding in the hard-coded runtime."]],"type":[["FullBackend",""],["FullClient",""]]});

@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["interbtc_runtime_parachain"] = [{"text":"impl Contains&lt;MultiLocation&gt; for <a class=\"struct\" href=\"interbtc_runtime_parachain/struct.ParentOrParentsUnitPlurality.html\" title=\"struct interbtc_runtime_parachain::ParentOrParentsUnitPlurality\">ParentOrParentsUnitPlurality</a>","synthetic":false,"types":["interbtc_runtime_parachain::ParentOrParentsUnitPlurality"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

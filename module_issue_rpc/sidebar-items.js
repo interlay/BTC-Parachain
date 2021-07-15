@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error",""]],"mod":[["gen_client","The generated client module."]],"struct":[["Issue","A struct that implements the [`IssueApi`]."],["IssueClient","The Client."]],"trait":[["IssueApi",""],["IssueRuntimeApi",""]]});

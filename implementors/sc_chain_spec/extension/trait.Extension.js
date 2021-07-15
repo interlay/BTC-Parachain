@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["interbtc_parachain"] = [{"text":"impl Extension for <a class=\"struct\" href=\"interbtc_parachain/chain_spec/struct.Extensions.html\" title=\"struct interbtc_parachain::chain_spec::Extensions\">Extensions</a>","synthetic":false,"types":["interbtc_parachain::chain_spec::Extensions"]},{"text":"impl Extension for <a class=\"struct\" href=\"interbtc_parachain/chain_spec/struct.ExtensionsFork.html\" title=\"struct interbtc_parachain::chain_spec::ExtensionsFork\">ExtensionsFork</a>","synthetic":false,"types":["interbtc_parachain::chain_spec::ExtensionsFork"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

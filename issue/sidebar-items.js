@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["IssueRequestStatus",""]],"mod":[["pallet","The module that hosts all the FRAME types needed to add this pallet to a runtime."],["types",""]],"struct":[["IssueRequest",""]],"trait":[["WeightInfo","Weight functions needed for issue."]]});

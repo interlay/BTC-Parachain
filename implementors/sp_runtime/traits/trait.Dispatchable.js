@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["interbtc_runtime_parachain"] = [{"text":"impl Dispatchable for <a class=\"enum\" href=\"interbtc_runtime_parachain/enum.Call.html\" title=\"enum interbtc_runtime_parachain::Call\">Call</a>","synthetic":false,"types":["interbtc_runtime_parachain::Call"]}];
+implementors["interbtc_runtime_standalone"] = [{"text":"impl Dispatchable for <a class=\"enum\" href=\"interbtc_runtime_standalone/enum.Call.html\" title=\"enum interbtc_runtime_standalone::Call\">Call</a>","synthetic":false,"types":["interbtc_runtime_standalone::Call"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

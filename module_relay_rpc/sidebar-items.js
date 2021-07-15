@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error",""]],"mod":[["gen_client","The generated client module."]],"struct":[["Relay","A struct that implements the [`RelayApi`]."],["RelayClient","The Client."]],"trait":[["RelayApi",""],["RelayRuntimeApi",""]]});

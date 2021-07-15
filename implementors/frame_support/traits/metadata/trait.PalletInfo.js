@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["interbtc_runtime_parachain"] = [{"text":"impl PalletInfo for <a class=\"struct\" href=\"interbtc_runtime_parachain/struct.PalletInfo.html\" title=\"struct interbtc_runtime_parachain::PalletInfo\">PalletInfo</a>","synthetic":false,"types":["interbtc_runtime_parachain::PalletInfo"]}];
+implementors["interbtc_runtime_standalone"] = [{"text":"impl PalletInfo for <a class=\"struct\" href=\"interbtc_runtime_standalone/struct.PalletInfo.html\" title=\"struct interbtc_runtime_standalone::PalletInfo\">PalletInfo</a>","synthetic":false,"types":["interbtc_runtime_standalone::PalletInfo"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["interbtc_runtime_standalone"] = [{"text":"impl Config for <a class=\"struct\" href=\"interbtc_runtime_standalone/struct.Runtime.html\" title=\"struct interbtc_runtime_standalone::Runtime\">Runtime</a>","synthetic":false,"types":["interbtc_runtime_standalone::Runtime"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

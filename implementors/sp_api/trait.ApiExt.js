@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["interbtc_runtime_parachain"] = [{"text":"impl&lt;Block:&nbsp;BlockT, C:&nbsp;CallApiAt&lt;Block&gt;&gt; ApiExt&lt;Block&gt; for <a class=\"struct\" href=\"interbtc_runtime_parachain/struct.RuntimeApiImpl.html\" title=\"struct interbtc_runtime_parachain::RuntimeApiImpl\">RuntimeApiImpl</a>&lt;Block, C&gt;","synthetic":false,"types":["interbtc_runtime_parachain::RuntimeApiImpl"]}];
+implementors["interbtc_runtime_standalone"] = [{"text":"impl&lt;Block:&nbsp;BlockT, C:&nbsp;CallApiAt&lt;Block&gt;&gt; ApiExt&lt;Block&gt; for <a class=\"struct\" href=\"interbtc_runtime_standalone/struct.RuntimeApiImpl.html\" title=\"struct interbtc_runtime_standalone::RuntimeApiImpl\">RuntimeApiImpl</a>&lt;Block, C&gt;","synthetic":false,"types":["interbtc_runtime_standalone::RuntimeApiImpl"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

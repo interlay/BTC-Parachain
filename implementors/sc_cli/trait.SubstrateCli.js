@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["interbtc_parachain"] = [{"text":"impl SubstrateCli for <a class=\"struct\" href=\"interbtc_parachain/cli/struct.Cli.html\" title=\"struct interbtc_parachain::cli::Cli\">Cli</a>","synthetic":false,"types":["interbtc_parachain::cli::Cli"]},{"text":"impl SubstrateCli for <a class=\"struct\" href=\"interbtc_parachain/cli/struct.RelayChainCli.html\" title=\"struct interbtc_parachain::cli::RelayChainCli\">RelayChainCli</a>","synthetic":false,"types":["interbtc_parachain::cli::RelayChainCli"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["interbtc_parachain"] = [{"text":"impl NativeExecutionDispatch for <a class=\"struct\" href=\"interbtc_parachain/service/struct.Executor.html\" title=\"struct interbtc_parachain::service::Executor\">Executor</a>","synthetic":false,"types":["interbtc_parachain::service::Executor"]}];
+implementors["interbtc_standalone"] = [{"text":"impl NativeExecutionDispatch for <a class=\"struct\" href=\"interbtc_standalone/service/struct.Executor.html\" title=\"struct interbtc_standalone::service::Executor\">Executor</a>","synthetic":false,"types":["interbtc_standalone::service::Executor"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

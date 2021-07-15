@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["StakedRelayer","Bonded participant which can suggest and vote on proposals."]]});

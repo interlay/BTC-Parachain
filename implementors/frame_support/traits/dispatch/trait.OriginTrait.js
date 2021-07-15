@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["interbtc_runtime_parachain"] = [{"text":"impl OriginTrait for <a class=\"struct\" href=\"interbtc_runtime_parachain/struct.Origin.html\" title=\"struct interbtc_runtime_parachain::Origin\">Origin</a>","synthetic":false,"types":["interbtc_runtime_parachain::Origin"]}];
+implementors["interbtc_runtime_standalone"] = [{"text":"impl OriginTrait for <a class=\"struct\" href=\"interbtc_runtime_standalone/struct.Origin.html\" title=\"struct interbtc_runtime_standalone::Origin\">Origin</a>","synthetic":false,"types":["interbtc_runtime_standalone::Origin"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

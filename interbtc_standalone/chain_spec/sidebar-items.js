@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["authority_keys_from_seed","Generate an Aura authority key."],["beta_testnet_config",""],["development_config",""],["get_account_id_from_seed","Helper function to generate an account ID from seed"],["get_from_seed","Helper function to generate a crypto pair from seed"],["local_config",""]],"type":[["ChainSpec",""]]});
