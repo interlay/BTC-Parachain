@@ -39,8 +39,16 @@ pub(crate) mod vault_registry {
     pub use frame_support::dispatch::{DispatchError, DispatchResult};
     pub use vault_registry::{DefaultVault, VaultStatus};
 
-    pub fn get_backing_collateral<T: crate::Config>(vault_id: &T::AccountId) -> Result<Collateral<T>, DispatchError> {
-        <vault_registry::Pallet<T>>::get_backing_collateral(vault_id)
+    // excluding nomination
+    pub fn get_vault_collateral<T: crate::Config>(vault_id: &T::AccountId) -> Result<Collateral<T>, DispatchError> {
+        <vault_registry::Pallet<T>>::get_vault_collateral(vault_id)
+    }
+
+    // including nomination
+    pub fn get_vault_total_collateral<T: crate::Config>(
+        vault_id: &T::AccountId,
+    ) -> Result<Collateral<T>, DispatchError> {
+        <vault_registry::Pallet<T>>::get_vault_total_collateral(vault_id)
     }
 
     pub fn vault_exists<T: crate::Config>(id: &T::AccountId) -> bool {
@@ -53,10 +61,6 @@ pub(crate) mod vault_registry {
 
     pub fn get_premium_redeem_threshold<T: crate::Config>() -> UnsignedFixedPoint<T> {
         <vault_registry::Pallet<T>>::premium_redeem_threshold()
-    }
-
-    pub fn compute_collateral<T: crate::Config>(vault_id: &T::AccountId) -> Result<Collateral<T>, DispatchError> {
-        <vault_registry::Pallet<T>>::compute_collateral(vault_id)
     }
 
     pub fn is_allowed_to_withdraw_collateral<T: crate::Config>(

@@ -52,10 +52,10 @@ impl<T: Config> CurrencySource<T> {
 
     pub fn current_balance(&self) -> Result<Collateral<T>, DispatchError> {
         match self {
-            CurrencySource::Collateral(x) => Pallet::<T>::get_backing_collateral(x),
+            CurrencySource::Collateral(x) => Pallet::<T>::get_vault_total_collateral(x),
             CurrencySource::Griefing(x) => {
                 let vault = Pallet::<T>::get_rich_vault_from_id(x)?;
-                let backing_collateral = Pallet::<T>::get_backing_collateral(x)?;
+                let backing_collateral = Pallet::<T>::get_vault_total_collateral(x)?;
                 let backing_collateral = if vault.data.is_liquidated() {
                     vault
                         .data
@@ -334,13 +334,17 @@ impl<T: Config> RichVault<T> {
     }
 
     pub fn get_collateral(&self) -> Result<Collateral<T>, DispatchError> {
-        Pallet::<T>::get_backing_collateral(&self.id())
+        Pallet::<T>::get_vault_collateral(&self.id())
+    }
+
+    pub fn get_total_collateral(&self) -> Result<Collateral<T>, DispatchError> {
+        Pallet::<T>::get_vault_total_collateral(&self.id())
     }
 
     pub fn get_free_collateral(&self) -> Result<Collateral<T>, DispatchError> {
         let used_collateral = self.get_used_collateral()?;
         Ok(self
-            .get_collateral()?
+            .get_total_collateral()?
             .checked_sub(&used_collateral)
             .ok_or(Error::<T>::ArithmeticUnderflow)?)
     }
@@ -355,7 +359,7 @@ impl<T: Config> RichVault<T> {
             .checked_mul_int(issued_tokens_in_collateral)
             .ok_or(Error::<T>::ArithmeticOverflow)?;
 
-        Ok(self.get_collateral()?.min(used_collateral))
+        Ok(self.get_total_collateral()?.min(used_collateral))
     }
 
     pub fn issuable_tokens(&self) -> Result<Wrapped<T>, DispatchError> {
@@ -364,10 +368,12 @@ impl<T: Config> RichVault<T> {
             return Ok(0u32.into());
         }
 
+        // used_collateral = (exchange_rate * (issued_tokens + to_be_issued_tokens)) * secure_collateral_threshold
+        // free_collateral = collateral - used_collateral
         let free_collateral = self.get_free_collateral()?;
-
         let secure_threshold = Pallet::<T>::secure_collateral_threshold();
 
+        // issuable_tokens = (free_collateral / exchange_rate) / secure_collateral_threshold
         let issuable =
             Pallet::<T>::calculate_max_wrapped_from_collateral_for_threshold(free_collateral, secure_threshold)?;
 
@@ -440,7 +446,18 @@ impl<T: Config> RichVault<T> {
     }
 
     pub(crate) fn slash_to_liquidation_vault(&mut self, amount: Collateral<T>) -> DispatchResult {
-        ext::staking::slash_stake::<T>(&self.id(), Pallet::<T>::collateral_to_fixed(amount)?)?;
+        let collateral = self.get_collateral()?;
+        let (to_withdraw, to_slash) = amount
+            .checked_sub(&collateral)
+            .and_then(|leftover| Some((collateral, leftover)))
+            .unwrap_or((amount, Zero::zero()));
+
+        let vault_id = self.id();
+        // "slash" vault first
+        ext::staking::withdraw_stake::<T>(&vault_id, &vault_id, to_withdraw)?;
+        // take remainder from nominators
+        ext::staking::slash_stake::<T>(&vault_id, to_slash)?;
+
         Pallet::<T>::transfer_funds(
             CurrencySource::ReservedBalance(self.id()),
             CurrencySource::LiquidationVault,
@@ -471,12 +488,10 @@ impl<T: Config> RichVault<T> {
 
         // slash backing collateral used for issued + to_be_issued to the liquidation vault
         self.slash_to_liquidation_vault(liquidated_collateral_excluding_to_be_redeemed)?;
+
         // temporarily slash additional collateral for the to_be_redeemed tokens
         // this is re-distributed once the tokens are burned
-        ext::staking::slash_stake::<T>(
-            &self.id(),
-            Pallet::<T>::collateral_to_fixed(collateral_for_to_be_redeemed)?,
-        )?;
+        ext::staking::slash_stake::<T>(&self.id(), collateral_for_to_be_redeemed)?;
         self.increase_liquidated_collateral(collateral_for_to_be_redeemed)?;
 
         // Copy all tokens to the liquidation vault

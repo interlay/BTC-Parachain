@@ -237,7 +237,7 @@ impl<T: Config> Pallet<T> {
             Error::<T>::VaultNotOptedInToNomination
         );
 
-        let vault_backing_collateral = ext::vault_registry::get_backing_collateral::<T>(&vault_id)?;
+        let vault_backing_collateral = ext::vault_registry::get_vault_total_collateral::<T>(&vault_id)?;
         let total_nominated_collateral = Self::get_total_nominated_collateral(&vault_id)?;
         let new_nominated_collateral = total_nominated_collateral
             .checked_add(&amount)
@@ -292,8 +292,8 @@ impl<T: Config> Pallet<T> {
     }
 
     pub fn get_total_nominated_collateral(vault_id: &T::AccountId) -> Result<Collateral<T>, DispatchError> {
-        let vault_backing_collateral = ext::vault_registry::get_backing_collateral::<T>(vault_id)?;
-        let vault_actual_collateral = ext::vault_registry::compute_collateral::<T>(vault_id)?;
+        let vault_backing_collateral = ext::vault_registry::get_vault_total_collateral::<T>(vault_id)?;
+        let vault_actual_collateral = ext::vault_registry::get_vault_collateral::<T>(vault_id)?;
         Ok(vault_backing_collateral
             .checked_sub(&vault_actual_collateral)
             .ok_or(Error::<T>::ArithmeticUnderflow)?)
