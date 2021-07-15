@@ -1,4 +1,4 @@
-image: "registry.gitlab.com/interlay/containers/rust-base:nightly-2021-03-15"
+image: "registry.gitlab.com/interlay/containers/rust-base:nightly-2021-07-13"
 
 .only-refs: &only_refs
     only:
@@ -43,63 +43,77 @@ stages:
   - publish
   - release
 
-test:
-  stage: test
-  extends:
-    - .rust-base-job
-  script:
-    - cargo fmt -- --check
-    - cargo check --workspace --release
-    - cargo test --workspace --release
+# test:
+#   stage: test
+#   extends:
+#     - .rust-base-job
+#   script:
+#     - cargo fmt -- --check
+#     - cargo check --workspace --release
+#     - cargo test --workspace --release
 
-build-standalone:
+build:
   stage: build
   extends:
     - .rust-base-job
   variables:
     ARTIFACT_BIN_PATH: interbtc-standalone
+  parallel:
+      matrix:
+          - PLATFORM: x86_64-unknown-linux-gnu
+            FILE_EXTENSION: [""]
+            BIN:
+              - interbtc-standalone
+              - interbtc-parachain
+          - PLATFORM: x86_64-pc-windows-gnu
+            FILE_EXTENSION: [".exe"]
+            BIN:
+              - interbtc-standalone
+              - interbtc-parachain
   script:
-    - cargo build --release --bin interbtc-standalone
-  artifacts:
-    name: "${CI_COMMIT_REF_SLUG}-standalone"
-    paths:
-      - target/release/${ARTIFACT_BIN_PATH}
+    - cargo check --workspace --release --target $PLATFORM
+    - cargo build --release --bin $BIN --target $PLATFORM
+    - ls -l target/$PLATFORM/release/
+  # artifacts:
+  #   name: "${CI_COMMIT_REF_SLUG}"
+  #   paths:
+  #     - target/release/${ARTIFACT_BIN_PATH}
 
-build-parachain:
-  stage: build
-  extends:
-    - .rust-base-job
-  variables:
-    ARTIFACT_BIN_PATH: interbtc-parachain
-  script:
-    - cargo build --release --bin interbtc-parachain
-  artifacts:
-    name: "${CI_COMMIT_REF_SLUG}-parachain"
-    paths:
-      - target/release/${ARTIFACT_BIN_PATH}
+# build-parachain:
+#   stage: build
+#   extends:
+#     - .rust-base-job
+#   variables:
+#     ARTIFACT_BIN_PATH: interbtc-parachain
+#   script:
+#     - cargo build --release --bin interbtc-parachain
+#   artifacts:
+#     name: "${CI_COMMIT_REF_SLUG}-parachain"
+#     paths:
+#       - target/release/${ARTIFACT_BIN_PATH}
 
-docker-publish-standalone:
-  dependencies:
-    - build-standalone
-  variables:
-    ARTIFACT_BIN_PATH: interbtc-standalone
-  extends:
-    - .docker-base-job
+# docker-publish-standalone:
+#   dependencies:
+#     - build-standalone
+#   variables:
+#     ARTIFACT_BIN_PATH: interbtc-standalone
+#   extends:
+#     - .docker-base-job
 
-docker-publish-parachain:
-  dependencies:
-    - build-parachain
-  variables:
-    ARTIFACT_BIN_PATH: interbtc-parachain
-  extends:
-    - .docker-base-job
+# docker-publish-parachain:
+#   dependencies:
+#     - build-parachain
+#   variables:
+#     ARTIFACT_BIN_PATH: interbtc-parachain
+#   extends:
+#     - .docker-base-job
 
-release-github:
-  stage: release
-  image: registry.gitlab.com/interlay/containers/github-publisher:master
-  script:
-    - gh auth status
-    - git-chglog --output CHANGELOG.md $CI_COMMIT_TAG
-    - gh release -R https://github.com/interlay/interbtc create $CI_COMMIT_TAG --title $CI_COMMIT_TAG -F CHANGELOG.md -d
-  only:
-    - tags
+# release-github:
+#   stage: release
+#   image: registry.gitlab.com/interlay/containers/github-publisher:master
+#   script:
+#     - gh auth status
+#     - git-chglog --output CHANGELOG.md $CI_COMMIT_TAG
+#     - gh release -R https://github.com/interlay/interbtc create $CI_COMMIT_TAG --title $CI_COMMIT_TAG -F CHANGELOG.md -d
+#   only:
+#     - tags
