@@ -97,7 +97,7 @@ fn get_vault_sla(account: [u8; 32]) -> i128 {
 }
 
 fn get_vault_collateral(account: [u8; 32]) -> i128 {
-    VaultRegistryPallet::compute_collateral(&account_of(account))
+    VaultRegistryPallet::get_vault_collateral(&account_of(account))
         .unwrap()
         .try_into()
         .unwrap()

@@ -229,7 +229,7 @@ pub mod pallet {
             Self::deposit_event(Event::<T>::DepositCollateral(
                 vault.id(),
                 amount,
-                vault.get_collateral()?,
+                vault.get_total_collateral()?,
                 vault.get_free_collateral()?,
             ));
             Ok(().into())
@@ -262,7 +262,11 @@ pub mod pallet {
 
             let vault = Self::get_rich_vault_from_id(&sender)?;
 
-            Self::deposit_event(Event::<T>::WithdrawCollateral(sender, amount, vault.get_collateral()?));
+            Self::deposit_event(Event::<T>::WithdrawCollateral(
+                sender,
+                amount,
+                vault.get_total_collateral()?,
+            ));
             Ok(().into())
         }
 
@@ -565,7 +569,12 @@ impl<T: Config> Pallet<T> {
         Ok(vault)
     }
 
-    pub fn get_backing_collateral(vault_id: &T::AccountId) -> Result<Collateral<T>, DispatchError> {
+    pub fn get_vault_collateral(vault_id: &T::AccountId) -> Result<Collateral<T>, DispatchError> {
+        let collateral = ext::staking::compute_stake::<T>(vault_id, vault_id)?;
+        collateral.try_into().map_err(|_| Error::<T>::TryIntoIntError.into())
+    }
+
+    pub fn get_vault_total_collateral(vault_id: &T::AccountId) -> Result<Collateral<T>, DispatchError> {
         Ok(ext::staking::total_current_stake::<T>(vault_id)?
             .try_into()
             .map_err(|_| Error::<T>::TryIntoIntError)?)
@@ -603,7 +612,7 @@ impl<T: Config> Pallet<T> {
         Self::increase_total_backing_collateral(amount)?;
 
         // Deposit `amount` of stake in the pool
-        ext::staking::deposit_stake::<T>(vault_id, vault_id, Self::collateral_to_fixed(amount)?)?;
+        ext::staking::deposit_stake::<T>(vault_id, vault_id, amount)?;
 
         ext::sla::event_update_vault_sla::<T>(&vault.id(), ext::sla::Action::Deposit(amount))?;
         Ok(())
@@ -622,7 +631,7 @@ impl<T: Config> Pallet<T> {
         Self::decrease_total_backing_collateral(amount)?;
 
         // Withdraw `amount` of stake from the pool
-        ext::staking::withdraw_stake::<T>(vault_id, vault_id, Self::collateral_to_fixed(amount)?)?;
+        ext::staking::withdraw_stake::<T>(vault_id, vault_id, amount)?;
 
         ext::sla::event_update_vault_sla::<T>(&vault.id(), ext::sla::Action::Withdraw(amount))?;
         Ok(())
@@ -650,7 +659,7 @@ impl<T: Config> Pallet<T> {
     ) -> Result<bool, DispatchError> {
         let vault = Self::get_vault_from_id(vault_id)?;
 
-        let new_collateral = match Self::get_backing_collateral(vault_id)?.checked_sub(&amount) {
+        let new_collateral = match Self::get_vault_total_collateral(vault_id)?.checked_sub(&amount) {
             Some(x) => x,
             None => return Ok(false),
         };
@@ -682,7 +691,7 @@ impl<T: Config> Pallet<T> {
 
     fn slash_backing_collateral(vault_id: &T::AccountId, amount: Collateral<T>) -> DispatchResult {
         ext::collateral::unlock::<T>(vault_id, amount)?;
-        ext::staking::slash_stake::<T>(vault_id, Self::collateral_to_fixed(amount)?)?;
+        ext::staking::slash_stake::<T>(vault_id, amount)?;
         Ok(())
     }
 
@@ -977,7 +986,7 @@ impl<T: Config> Pallet<T> {
             vault.decrease_liquidated_collateral(to_be_released)?;
 
             // release vault's collateral
-            ext::staking::unslash_stake::<T>(vault_id, Self::collateral_to_fixed(to_be_released)?)?;
+            ext::staking::unslash_stake::<T>(vault_id, to_be_released)?;
 
             Self::deposit_event(Event::<T>::RedeemTokensLiquidatedVault(
                 vault_id.clone(),
@@ -1063,7 +1072,7 @@ impl<T: Config> Pallet<T> {
             old_vault.decrease_liquidated_collateral(to_be_released)?;
 
             // release old-vault's collateral
-            ext::staking::unslash_stake::<T>(old_vault_id, Self::collateral_to_fixed(to_be_released)?)?;
+            ext::staking::unslash_stake::<T>(old_vault_id, to_be_released)?;
         }
 
         old_vault.decrease_tokens(tokens)?;
@@ -1140,13 +1149,12 @@ impl<T: Config> Pallet<T> {
     /// # Arguments
     /// * `vault_id` - the id of the vault to liquidate
     /// * `status` - status with which to liquidate the vault
-
     pub fn liquidate_vault_with_status(
         vault_id: &T::AccountId,
         status: VaultStatus,
     ) -> Result<Collateral<T>, DispatchError> {
         let mut vault = Self::get_active_rich_vault_from_id(&vault_id)?;
-        let backing_collateral = vault.get_collateral()?;
+        let backing_collateral = vault.get_total_collateral()?;
         let vault_orig = vault.data.clone();
 
         let to_slash = vault.liquidate(status)?;
@@ -1268,7 +1276,7 @@ impl<T: Config> Pallet<T> {
         liquidation_threshold: UnsignedFixedPoint<T>,
     ) -> Result<bool, DispatchError> {
         Self::is_collateral_below_threshold(
-            Self::get_backing_collateral(&vault.id)?,
+            Self::get_vault_total_collateral(&vault.id)?,
             vault.issued_tokens,
             liquidation_threshold,
         )
@@ -1485,7 +1493,7 @@ impl<T: Config> Pallet<T> {
         only_issued: bool,
     ) -> Result<UnsignedFixedPoint<T>, DispatchError> {
         let vault = Self::get_active_rich_vault_from_id(&vault_id)?;
-        let collateral = vault.get_collateral()?;
+        let collateral = vault.get_total_collateral()?;
         Self::get_collateralization_from_vault_and_collateral(vault_id, collateral, only_issued)
     }
 
@@ -1533,11 +1541,6 @@ impl<T: Config> Pallet<T> {
 
     pub fn vault_exists(id: &T::AccountId) -> bool {
         Vaults::<T>::contains_key(id)
-    }
-
-    pub fn compute_collateral(vault_id: &T::AccountId) -> Result<Collateral<T>, DispatchError> {
-        let collateral = ext::staking::compute_stake::<T>(vault_id, vault_id)?;
-        collateral.try_into().map_err(|_| Error::<T>::TryIntoIntError.into())
     }
 
     /// Private getters and setters
@@ -1601,7 +1604,7 @@ impl<T: Config> Pallet<T> {
         let issued_tokens = vault.data.issued_tokens;
 
         // the current locked backing collateral by the vault
-        let collateral = Self::get_backing_collateral(vault_id)?;
+        let collateral = Self::get_vault_total_collateral(vault_id)?;
 
         Self::is_collateral_below_threshold(collateral, issued_tokens, threshold)
     }

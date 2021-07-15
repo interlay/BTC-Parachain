@@ -595,7 +595,7 @@ fn liquidate_at_most_secure_threshold() {
         ));
 
         let vault_orig = <crate::Vaults<Test>>::get(&vault_id);
-        let backing_collateral_orig = VaultRegistry::get_backing_collateral(&vault_id).unwrap();
+        let backing_collateral_orig = VaultRegistry::get_vault_total_collateral(&vault_id).unwrap();
 
         // set exchange rate
         ext::oracle::wrapped_to_collateral::<Test>.mock_safe(|v| MockResult::Return(Ok(v * 10)));
@@ -866,7 +866,7 @@ mod liquidation_threshold_tests {
         run_test(|| {
             let vault = setup();
             let backing_collateral = vault.issued_tokens * 2;
-            VaultRegistry::get_backing_collateral.mock_safe(move |_| MockResult::Return(Ok(backing_collateral)));
+            VaultRegistry::get_vault_total_collateral.mock_safe(move |_| MockResult::Return(Ok(backing_collateral)));
             assert_eq!(
                 VaultRegistry::is_vault_below_liquidation_threshold(&vault, FixedU128::from(2)),
                 Ok(false)
@@ -879,7 +879,7 @@ mod liquidation_threshold_tests {
         run_test(|| {
             let vault = setup();
             let backing_collateral = vault.issued_tokens * 2 - 1;
-            VaultRegistry::get_backing_collateral.mock_safe(move |_| MockResult::Return(Ok(backing_collateral)));
+            VaultRegistry::get_vault_total_collateral.mock_safe(move |_| MockResult::Return(Ok(backing_collateral)));
             assert_eq!(
                 VaultRegistry::is_vault_below_liquidation_threshold(&vault, FixedU128::from(2)),
                 Ok(true)
