@@ -49,8 +49,8 @@ test:
     - .rust-base-job
   script:
     - cargo fmt -- --check
-    - cargo check --workspace --release
-    - cargo test --workspace --release
+    # - cargo check --workspace --release
+    # - cargo test --workspace --release
 
 build:
   stage: build
@@ -60,18 +60,16 @@ build:
     ARTIFACT_BIN_PATH: interbtc-standalone
   parallel:
       matrix:
-          - PLATFORM: x86_64-unknown-linux-gnu
+          - PLATFORM:
+              - x86_64-unknown-linux-gnu
+              - x86_64-unknown-linux-musl
             FILE_EXTENSION: [""]
-            BIN:
-              - interbtc-standalone
-              - interbtc-parachain
-          - PLATFORM: x86_64-pc-windows-gnu
-            FILE_EXTENSION: [".exe"]
             BIN:
               - interbtc-standalone
               - interbtc-parachain
   script:
     - cargo check --workspace --release --target $PLATFORM
+    - cargo test --workspace --release --target $PLATFORM
     - cargo build --release --bin $BIN --target $PLATFORM
     - ls -l target/$PLATFORM/release/
   # artifacts:
