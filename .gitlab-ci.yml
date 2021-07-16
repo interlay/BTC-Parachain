@@ -1,4 +1,4 @@
-image: "registry.gitlab.com/interlay/containers/rust-base:nightly-2021-07-13"
+image: "registry.gitlab.com/interlay/containers/rust-base:nightly-2021-07-15"
 
 .only-refs: &only_refs
     only:
